@@ -1,0 +1,51 @@
+{% extends 'blogs/basic.html' %}
+{% load static %}
+{% block CSS %}
+{% endblock %}
+{% block body %}
+{% load static %}
+<div class="container-xl mt-5">
+  <div class="p-2 p-md-2 mb-3 text-white rounded bg-dark">
+    <h3 class="display-4 fst-italic">THE AWESOME CART BLOGS</h3>
+  </div>
+</div>
+<div class="container-md mt-5">
+  <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
+    <div class="col-md-6 px-0">
+      <h1 class="display-4 fst-italic">THE WALKING DEAD SEASON 11(I) INSIGHTS</h1>
+      <p class="lead my-3">THE AWESOME BLOGS OF AWESOME CART, FEATURING AMC'S THE WALKING DEAD SEASON 11 !!</p>
+      <p class="lead mb-0"><a href="#" class="text-white fw-bold">Continue reading the hunt...</a></p>
+    </div>
+  </div>
+  <!-- the post starts here -->
+  <div class="container test">
+  </div>
+  <div class="row mb-2">
+    {% for blog in allblogs %}
+    <div class="col-md-6">
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative" style="width: 40rem; height: 15em;">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary">World</strong>
+          <h3 class="mb-0">{{blog.title}}</h3>
+          <div class="mb-1 text-muted">{{blog.pub_date}}</div>
+          <p class="card-text">{{blog.c_head0}}</p>
+          <a class="stretched-link" href="/blogs/blogpost/{{blog.post_id}}"> <button class="btn btn-primary" id="blg{{blog.post_id}}">Continue reading</button></a>
+        </div>
+        <div class="col-auto d-none d-lg-block my-auto" style="width: 40%;">
+           <img src="/media/{{blog.thumbnail}}" alt="" style="width:100%;background-position: center;"></img>
+        </div>
+      </div>
+    {% if forloop.counter|divisibleby:2 %}
+    </div><div class="row my-2">
+    {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block JS %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+{% endblock %}

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+
+    <title>{% block tittle %}{% endblock%}</title>
+    {% load static %}
+    <style>
+      {% block CSS %}
+           {% endblock %}
+    </style>
+  </head>
+  <body>
+    {% load static %}
+
+    <!-- here is the navbar -->
+    <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">The AMC store Orignal</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item active">
+              <a class="nav-link" href="/shop">Home <span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/shop/about">about</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/shop/contact">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/blogs">Blogs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/shop/tracker">Tracker</a>
+            </li>
+          </ul>
+          <form class="d-flex" method="get" action="/shop/search/">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              id="search"
+              name="search"
+            />
+            <button class="btn btn-outline-success" type="submit">
+              Search
+            </button>
+          </form>
+          <!-- Button trigger modal -->
+          <button
+            type="button"
+            class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            cart( <span id="cart">0</span> )
+          </button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="staticBackdrop"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" >
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">
+                    My Awesome Cart
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div id = 'CartModal' class="modal-body">My awesome Cart</div>
+                <div class="modal-footer" style="justify-content:space-evenly;">
+                  <span id="modal-footer-totalCost" style="text-align: left;"></span>
+                  <div>
+                  <button
+                    type="button"
+                    class="btn btn-danger clearCart"
+                    data-bs-dismiss="modal"
+                    onclick="clearCart()"
+                  >
+                    Clear cart
+                  </button>
+                  <a href="/shop/checkout">
+                  <button type="button" class="btn btn-primary">
+                    CheckOut
+                  </button>
+                </a>
+              </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    {% block body %}{% endblock %}
+
+    <!-- script for jquery and bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    {% block JS %} {% endblock %}
+
+  </body>
+  <script>
+       if (localStorage.getItem('cart') == null) {
+      var cart = {}
+    }
+    else {
+      cart = JSON.parse(localStorage.getItem('cart'));
+      CartCount(cart);
+      window.addEventListener('load', function() {
+    updateCart(cart);
+});
+      
+    }
+
+
+        // counting the items in cart here and reflecting it in the modal and cart popover
+        function CartCount(cart){
+      var count = 0;
+      for(var iteam in cart){
+        count = count + Number(cart[iteam][0])
+      }
+      document.getElementById('cart').innerHTML = count
+    }
+    
+
+    $('.cart').click(function(){
+     var idstr = this.id.toString();
+    if (cart[idstr] != undefined){
+      qty = cart[idstr][0] + 1;
+    }
+    else{
+      console.log(idstr)
+      qty = 1;
+      name = document.getElementById('nm'+idstr).innerHTML
+      price = document.getElementById('PRI'+idstr).innerHTML
+      cart[idstr] = [qty,name,price];
+    }
+    updateCart(cart);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    CartCount(cart);
+    });
+
+
+     // clicking on add to cart to card button functionality and adding the items to cart, also getting the id of the product->converting it into a string and then setting it in storage with the item name of that id
+    function updateCartModal(cart){
+      var modStr = '';
+      modStr = modStr + '<h5>items in your Cart - </h5><div class = "my-2">'
+      var i = 1;
+      var totalCost = 0;
+      for(var item in cart){
+        modStr = modStr + '<b>'+ i + '</b>';
+        modStr = modStr + ' ' + cart[item][1] + '   <span class="badge bg-primary badge-pill">' + cart[item][0] + '</span> <b class="ms-5">Price-'+ cart[item][2] +'$  X'+ cart[item][0]  + ' =' + Number(cart[item][2])*Number(cart[item][0]) +'$</b><br>'
+        i = i + 1;
+        totalCost = Number(cart[item][2])*Number(cart[item][0]) + totalCost
+        modStr = modStr + '</div>'
+        document.getElementById('CartModal').innerHTML = modStr;
+      }
+      document.getElementById('modal-footer-totalCost').innerHTML= `<b>Total Cost:   ${totalCost} $</b>`
+    }
+    
+
+
+     // updating the cart and adding the feature of adding more product in the cart of those items who are already inside the cart+setting the items in the object cart to the local stroge+firing the cartCount function+firing the updateCartModal function
+    function updateCart(cart){
+      for(var item in cart){
+        if (document.getElementById('Crt' +item) != null) {
+          document.getElementById('Crt' +item).innerHTML = `<button id='minus${item}' class='btn btn-primary minus'>-</button> <span id='val${item}'> ${cart[item][0]} </span> <button id='plus${item}' class='btn btn-primary plus'>+</button>`; 
+        }
+      }
+      localStorage.setItem('cart',JSON.stringify(cart));
+      CartCount(cart);
+      updateCartModal(cart);  
+    }
+  
+
+    
+  // function to clear the cart, here it sets all the items to zero and updates the cart in local stroge, it also fires up the update cart with new cart and attribute hence modal, cart count and the amount at each product card goes to zero. 
+  const clearCart =()=>{
+    cart = JSON.parse(localStorage.getItem('cart'));
+    for(var item in cart){
+      cart[item][0] = 0;
+    }
+    localStorage.setItem('cart',JSON.stringify(cart));
+    updateCart(cart);
+  }
+  $('#Modal').appendTo("body").modal('show');
+  </script>
+</html>

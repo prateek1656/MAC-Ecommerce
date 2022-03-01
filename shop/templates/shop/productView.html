@@ -1,0 +1,51 @@
+{% extends 'shop/basic.html' %}
+
+{% block tittle %} {{product.product_name}} - MAC {% endblock %}
+{% block body %} <div class="container my-4">
+    <div class="row">
+    <div class="col-md-4">
+    <div class="row">
+        <img src="/media/{{product.image}}" width="233px" height="385px" style="width: auto;object-fit: contain; margin: 5em;">
+    </div>
+        <div class="row">
+            <button class="btn btn-primary mx-3 my-3">Buy Now</button>
+            <span id="Crtpr{{product.id}}" class="divpr">
+                <button id="pr{{product.id}}" class="btn btn-primary cart">Add To Cart</button>
+              </span>
+        </div>
+
+    </div>
+
+    <div class="col-md-8">
+        <h5 id="nmpr{{product.id}}">{{product.product_name}}</h5>
+        <p><b>Rs.{{product.price}} </b></p>
+        <p>{{product.desc}}</p>
+
+
+    </div>
+    </div>
+
+
+</div>
+     {% endblock %}
+     {% block JS %}
+     <script>
+       
+    // adding the functionality for the add(+) and subtract(-) button, mind that since the id of the each product is created as minusID and plusID so to access the product from the cart we sliced the id and extracred the ID from it. 
+    $('.divpr').on('click', "button.minus" ,function(){
+      a = this.id.slice(7, );
+      cart['pr' + a][0] = cart['pr' + a][0] - 1;
+      cart['pr' + a][0] = Math.max(0,cart['pr' + a][0]);
+      document.getElementById('valpr' + a).innerHTML = cart['pr' + a][0];
+      updateCart(cart)
+    })
+
+
+    $('.divpr').on('click', "button.plus" ,function(){
+      a = this.id.slice(6, );
+      cart['pr' + a][0] = cart['pr' + a][0] + 1;
+      document.getElementById('valpr' + a).innerHTML = cart['pr' + a][0];
+      updateCart(cart)
+    }) 
+      </script>
+     {% endblock %}

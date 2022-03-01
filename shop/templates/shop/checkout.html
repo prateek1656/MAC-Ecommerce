@@ -1,0 +1,125 @@
+{% extends 'shop/basic.html' %}
+
+{% block tittle %} Checkout {% endblock %}
+{% block body %} <div class="container">
+    <div class="col my-4">
+        <h2> Step 1 - My Awesome Cart Express Checkout - Review Your Cart items </h2>
+        <div class="mt-3 mb-5">
+            <ul class="list-group" id='items'>
+            </ul>
+        </div>
+    </div>
+    <div class="col my-4">
+        <h2> Step 2 - Enter Address & Other Details</h2>
+        <form method="POST" action="/shop/checkout/">
+            <div class="row">
+                <div class="form-group col-md-6">{% csrf_token %}
+                    <input type="hidden" id="itemsJson" name="itemsJson">
+                    <label for="name">Name</label>
+                    <input type="name" class="form-control" id="name" name="name" placeholder="Name" required maxlength="20">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email"  required maxlength="50">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="inputAddress">Address</label>
+                    <input type="text" class="form-control" id="address1" placeholder="1234 Main St" name="address1" required maxlength="50">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputAddress2">Address Line 2</label>
+                    <input type="text" class="form-control" id="address2" name="address2"
+                        placeholder="Apartment, studio, or floor" required maxlength="50">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="inputCity">City</label>
+                    <input type="text" class="form-control" id="city" name="city" required maxlength="15">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputState">State</label>
+                    <input type="text" class="form-control" id="state" name="state" placeholder="Enter State" required maxlength="15">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="inputZip">Zip</label>
+                    <input type="text" class="form-control" id="zip_code" name="zip_code" required maxlength="10">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputZip">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" name="phone" required maxlength="20">
+            </div>
+            <button type="submit" class="btn btn-primary my-3">Place Order</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block JS %}
+
+<script>
+    if (localStorage.getItem('cart') == null) {
+        var cart = {}
+    }
+    else {
+        cart = JSON.parse(localStorage.getItem('cart'));
+        window.addEventListener('load', function () {
+        });
+
+    }
+
+    const cartRefactor = (cart) => {
+        for (var item in cart) {
+            if (cart[item][0] == 0) {
+                delete cart[item]
+            }
+        }
+        return cart
+    }
+
+    var sum = 0
+    const showItems = (cart)=>{
+        console.log(cart);
+        cart = cartRefactor(cart);
+        console.log(cart);
+        if(cart == {}) {
+            mystr = `<h5>Nothing in the cart, please add items from the store to buy your favorite products!!</h5>`
+            $('#items').append(mystr);
+        }else{
+            var totalCost = 0;
+            for (var item in cart) {
+                let name = cart[item][1];
+                let qty = cart[item][0];
+                let price = cart[item][2];
+                totalCost = totalCost + Number(price)*Number(qty)
+                sum = sum + qty;
+                mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${name}
+                            <span><span class="badge bg-primary badge-pill">${qty}</span> <b class='ms-2'>${price}$ X${qty} = ${Number(price)*Number(qty)}$</b></span>
+                        </li>`
+                $('#items').append(mystr);
+            }
+            totalCostStr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            <b>Total Cost</b>
+                            <span><b><h5>${totalCost}$</h5></b></span>
+                        </li>`
+                $('#items').append(totalCostStr);
+        }
+    }
+
+    showItems(cart);
+    document.getElementById('cart').innerHTML = sum;
+    $('#itemsJson').val(JSON.stringify(cart));
+
+    {% if thank %}
+    console.log('{{id}}')
+    alert('thanks for shopping with the AMC walking dead franchise your order id is {{id}} , we will deliver your order by {{deliveryDate}}, till then, Stay safe from the DEAD');
+    localStorage.clear();
+    document.location = '/shop';
+    {% endif %}
+
+</script>
+
+{% endblock %}
